@@ -1,0 +1,6 @@
+{
+  "name": "Tạo Prompt Ảnh Toán Học",
+  "description": "Ứng dụng phân tích Infographic giáo dục thành Prompt tạo ảnh DALL-E 3.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
