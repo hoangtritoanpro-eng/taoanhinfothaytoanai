@@ -2,20 +2,46 @@ import React, { useState } from 'react';
 import { Copy, Check, ExternalLink, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
+// Hàm tiện ích copy chung với Fallback siêu mạnh (Dùng chung cho toàn bộ Component)
+const copyToClipboard = async (text) => {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    throw new Error("Clipboard API không khả dụng");
+  } catch (err) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    let successful = false;
+    try {
+      successful = document.execCommand('copy');
+    } catch (error) {
+      console.error("Fallback copy error:", error);
+    }
+    document.body.removeChild(textArea);
+    return successful;
+  }
+};
+
 export default function ResultPanel({ result }) {
-  // Tách trạng thái để biết đang bấm nút nào ('prompt' hoặc 'all')
+  // Tách trạng thái để biết đang bấm nút nào ('prompt' hoặc 'all') trên Toolbar
   const [copiedType, setCopiedType] = useState(null);
 
-  // Hàm xử lý Copy với Fallback siêu mạnh, bao chạy trên Vercel và điện thoại
-  const handleCopy = async (type) => {
+  // 1. Hàm xử lý Copy cho các nút trên thanh công cụ (Toolbar)
+  const handleToolbarCopy = async (type) => {
     if (!result) return;
-
     let textToCopy = result;
 
-    // Lọc lấy riêng phần Prompt nếu người dùng bấm nút "Copy Prompt ChatGPT"
     if (type === 'prompt') {
-      // KỊCH BẢN 1: AI có bọc prompt chuẩn trong khối code ```text ... ```
       const match = result.match(/
 http://googleusercontent.com/immersive_entry_chip/0
 
-Thầy lưu lại và thử đưa lên Vercel nhé, nút sao chép giờ đã bắt chính xác nội dung rồi đấy!
+Với bản cập nhật này, khi Thầy di chuột vào khối văn bản có nền tối, một nút **"Copy code"** nhỏ tinh tế sẽ hiện ra ở góc phải. Nút ở trên thanh Toolbar vẫn giữ nguyên sự "thông minh" để phòng hờ, tạo ra một trải nghiệm người dùng hoàn hảo!
