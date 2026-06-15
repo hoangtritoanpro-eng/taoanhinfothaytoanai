@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Copy, Check, ExternalLink, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
-// Hàm copy có fallback cho trình duyệt không hỗ trợ Clipboard API
+// ===============================
+// HÀM COPY CÓ FALLBACK
+// ===============================
 const copyToClipboard = async (text) => {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -35,16 +37,22 @@ const copyToClipboard = async (text) => {
   }
 };
 
-// Tách riêng phần prompt nằm trong khối ```text ... ```
+// ===============================
+// HÀM TÁCH RIÊNG PROMPT CHATGPT
+// ===============================
 const extractPromptFromResult = (result) => {
   if (!result) return "";
 
-  const codeBlockMatch = result.match(/```(?:text|markdown|prompt)?\s*\n([\s\S]*?)```/i);
+  // Ưu tiên lấy nội dung trong khối ```text ... ```
+  const codeBlockMatch = result.match(
+    /```(?:text|markdown|prompt)?\s*\n([\s\S]*?)```/i
+  );
 
   if (codeBlockMatch && codeBlockMatch[1]) {
     return codeBlockMatch[1].trim();
   }
 
+  // Nếu không có code block, tìm từ khóa bắt đầu prompt
   const startKeyword = "Hãy tạo";
   const promptIndex = result.indexOf(startKeyword);
 
@@ -61,9 +69,15 @@ const extractPromptFromResult = (result) => {
   return result.trim();
 };
 
+// ===============================
+// COMPONENT CHÍNH
+// ===============================
 export default function ResultPanel({ result }) {
   const [copiedType, setCopiedType] = useState(null);
 
+  // ===============================
+  // COPY TRÊN THANH CÔNG CỤ
+  // ===============================
   const handleToolbarCopy = async (type) => {
     if (!result) return;
 
@@ -83,6 +97,9 @@ export default function ResultPanel({ result }) {
     }
   };
 
+  // ===============================
+  // KHỐI CODE NỀN ĐEN CÓ NÚT COPY PROMPT
+  // ===============================
   const CustomPreBlock = ({ children, ...props }) => {
     const [isBlockCopied, setIsBlockCopied] = useState(false);
 
@@ -116,7 +133,7 @@ export default function ResultPanel({ result }) {
     };
 
     return (
-      <div className="relative my-6 group">
+      <div className="relative my-6">
         <button
           type="button"
           onClick={handleBlockCopy}
@@ -171,12 +188,13 @@ export default function ResultPanel({ result }) {
 
   return (
     <div className="flex flex-col h-full">
+      {/* THANH CÔNG CỤ PHÍA TRÊN */}
       <div className="flex flex-wrap items-center justify-between p-4 border-b border-teal-100 bg-teal-50/30 gap-3">
         <h2 className="text-lg font-bold text-teal-900">
           Văn bản thô
         </h2>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => handleToolbarCopy("prompt")}
@@ -193,7 +211,9 @@ export default function ResultPanel({ result }) {
             )}
 
             <span className="text-sm">
-              {copiedType === "prompt" ? "Đã sao chép!" : "Copy Prompt ChatGPT"}
+              {copiedType === "prompt"
+                ? "Đã sao chép!"
+                : "Copy Prompt ChatGPT"}
             </span>
           </button>
 
@@ -221,7 +241,16 @@ export default function ResultPanel({ result }) {
             href="https://chatgpt.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors shadow-sm"
+            className="
+              flex items-center gap-2
+              px-4 py-2
+              bg-teal-600 text-white
+              rounded-lg
+              font-medium
+              hover:bg-teal-700
+              transition-colors
+              shadow-sm
+            "
           >
             <ExternalLink className="w-4 h-4" />
             <span className="text-sm">Mở ChatGPT</span>
@@ -229,6 +258,7 @@ export default function ResultPanel({ result }) {
         </div>
       </div>
 
+      {/* KHU VỰC HIỂN THỊ KẾT QUẢ MARKDOWN */}
       <div className="p-6 overflow-y-auto flex-1 prose prose-teal max-w-none text-slate-700 text-sm md:text-base leading-relaxed">
         <ReactMarkdown
           components={{
