@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Copy, Check, ExternalLink, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
-// Hàm tiện ích copy chung với Fallback siêu mạnh (Dùng chung cho toàn bộ ứng dụng)
+// Hàm tiện ích copy chung với Fallback (Dùng chung)
 const copyToClipboard = async (text) => {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -34,7 +34,7 @@ const copyToClipboard = async (text) => {
 export default function ResultPanel({ result }) {
   const [copiedType, setCopiedType] = useState(null);
 
-  // 1. Hàm xử lý Copy cho các nút bấm trên thanh menu ngang (Toolbar)
+  // 1. Hàm xử lý Copy trên thanh công cụ (Toolbar)
   const handleToolbarCopy = async (type) => {
     if (!result) return;
     let textToCopy = result;
@@ -75,11 +75,11 @@ export default function ResultPanel({ result }) {
     }
   };
 
-  // 2. KHỐI MÃ NỀN ĐEN THÔNG MINH (Tự động có nút Copy ở góc)
+  // 2. KHỐI MÃ NỀN ĐEN TÙY CHỈNH (Nút Copy LUÔN HIỂN THỊ ở góc)
   const CustomPreBlock = ({ children, ...props }) => {
     const [isBlockCopied, setIsBlockCopied] = useState(false);
     
-    // Hàm bóc tách nội dung text thuần túy từ thẻ <code> bên trong khối <pre>
+    // Hàm bóc tách nội dung text thuần túy
     const extractText = (node) => {
       if (typeof node === 'string') return node;
       if (Array.isArray(node)) return node.map(extractText).join('');
@@ -99,11 +99,11 @@ export default function ResultPanel({ result }) {
     };
 
     return (
-      <div className="relative group my-6">
+      <div className="relative my-6">
         
         <button
           onClick={handleBlockCopy}
-          className="absolute top-3 right-3 p-2 bg-slate-700/80 hover:bg-teal-600 text-slate-200 hover:text-white rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all flex items-center space-x-1.5 backdrop-blur-md shadow-sm z-10 border border-slate-600"
+          className="absolute top-3 right-3 p-2 bg-slate-700 hover:bg-teal-600 text-slate-100 hover:text-white rounded-md transition-colors flex items-center space-x-1.5 shadow-md z-10 border border-slate-500"
           title="Sao chép đoạn lệnh này"
         >
           {isBlockCopied ? <Check className="w-4 h-4 text-green-400"/> : <Copy className="w-4 h-4"/>}
@@ -113,7 +113,7 @@ export default function ResultPanel({ result }) {
         </button>
         
         
-        <pre className="!bg-slate-800 !text-slate-100 p-5 pt-12 rounded-xl overflow-x-auto shadow-inner m-0 text-sm leading-relaxed whitespace-pre-wrap break-words" {...props}>
+        <pre className="!bg-[#1e293b] !text-slate-200 p-5 pt-14 rounded-xl overflow-x-auto shadow-inner m-0 text-sm leading-relaxed whitespace-pre-wrap break-words border border-slate-700" {...props}>
           {children}
         </pre>
       </div>
