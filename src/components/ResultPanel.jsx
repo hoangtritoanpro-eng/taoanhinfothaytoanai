@@ -51,10 +51,6 @@ export default function ResultPanel({ result }) {
     setTimeout(() => setIsCopied(false), 2000); // Tắt thông báo sau 2 giây
   };
 
-  const openChatGPT = () => {
-    window.open('https://chatgpt.com', '_blank');
-  };
-
   if (!result) return null;
 
   return (
@@ -86,14 +82,16 @@ export default function ResultPanel({ result }) {
             <span className="text-sm">Chép tất cả</span>
           </button>
 
-          {/* Nút Mở ChatGPT */}
-          <button
-            onClick={openChatGPT}
+          {/* Nút Mở ChatGPT (Đã chuyển thành thẻ a để chống chặn Pop-up) */}
+          <a
+            href="https://chatgpt.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center space-x-2 px-4 py-2 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors shadow-sm"
           >
             <ExternalLink className="w-4 h-4" />
             <span className="text-sm">Mở ChatGPT</span>
-          </button>
+          </a>
         </div>
       </div>
 
